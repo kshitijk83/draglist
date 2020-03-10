@@ -1,38 +1,68 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+#root{
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  background-color: #F2F2F3;
+}
+*{
+  box-sizing: border-box;
+}
+/* cread color #73EACC */
+.App {
+  margin: auto;
+  width: 70%;
+  height: 28rem;
+  background-color: white;
+  box-shadow: 0px 6px 7px 0px rgba(179,166,179,1);
+  padding: 2rem;
 }
 
-.App-link {
-  color: #61dafb;
+.header{
+  color: rgb(110, 110, 110);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.skillCon{
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* flex-wrap: wrap; */
+  position: relative;;
+  height: 100%;
+}
+
+.cross{
+  cursor: pointer;
+}
+
+.skillInput{
+  background-color: #F2F2F3;
+  width: 100%;
+  border: none;
+  padding: .7rem;
+}
+.skill{
+  padding: .7rem;
+  background-color: #73EACC;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.list{
+  background-color: #73EACC;
+  width: 100%;
+  box-shadow: 2px 3px 4px 0px rgba(189,183,189,1);
+  display: flex;
+  width: 48%;
+  /* margin: 1rem; */
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transforms;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: -webkit-grab;
 }
