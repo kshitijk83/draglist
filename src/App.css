@@ -12,7 +12,7 @@
 .App {
   margin: auto;
   width: 70%;
-  height: 28rem;
+  height: 30rem;
   background-color: white;
   box-shadow: 0px 6px 7px 0px rgba(179,166,179,1);
   padding: 2rem;
@@ -24,9 +24,6 @@
 }
 
 .skillCon{
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* flex-wrap: wrap; */
   position: relative;;
   height: 100%;
   display: flex;
@@ -64,7 +61,6 @@
   background-color: #73EACC;
   width: 100%;
   box-shadow: 2px 3px 4px 0px rgba(189,183,189,1);
-  display: flex;
   /* margin: 1rem; */
   position: absolute;
   left: 0;
@@ -77,6 +73,34 @@
   -ms-user-select: none;
   user-select: none;
   cursor: grab;
+}
+
+.inputCon{
+  width: 100%;
+  position: relative;
+}
+
+.dropdown{
+  position: absolute;
+  top: 1.6rem;
+  left: 0;
+  width: 100%;
+  padding: 0;
+  color: rgb(82, 82, 83);
+  background-color: white;
+  border: 1px solid #F2F2F3;
+  z-index: 5;
+}
+
+.dropdown li{
+  position: relative;
+  padding: 1rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.dropdown li:hover{
+  background-color: #F2F2F3;
 }
 
 .cross{

@@ -131,6 +131,7 @@ class SkillContainer extends Component{
                 key={index}
                 item={item}
                 y={(item.id%5)*70}
+                z={5-(item.id%5)}
                 handlePos={this.changePos}
                 submitSkill={this.changeSkillHandler}
                 crossHandler={this.crossHandler}
@@ -143,6 +144,7 @@ class SkillContainer extends Component{
                 key={index}
                 item={item}
                 y={(item.id%5)*70}
+                z={5-(item.id%5)}
                 handlePos={this.changePos2}
                 submitSkill={this.changeSkillHandler2}
                 crossHandler={this.crossHandler2}

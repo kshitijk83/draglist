@@ -1,4 +1,6 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
+// import Dropdown from './Dropdown';
+// import { Dropdown } from 'semantic-ui-react';
 
 class SkillCard extends Component {
    constructor(props) {
@@ -10,17 +12,23 @@ class SkillCard extends Component {
           down: false,
           v: 0,
           vx: 0,
-          z: 1,
+          z: 0,
           x:0,
           y: 0,
           posy: 0,
           posx: 0,
           isInput: false,
-          inputValue: this.props.item.skill
+          inputValue: '',
+          options:[
+            {text: "Create Option"},
+            {text: "Create"},
+            {text: "Creasdate"}
+          ]
         };
         this.hold=false;
         this.timer=null;
         this.down=false;
+        this.selectOption=false;
       }
       componentWillMount() {
         this.setState({
@@ -28,7 +36,8 @@ class SkillCard extends Component {
           val: (this.props.item.id%5),
           y: this.props.y,
           no: this.props.item.id,
-          inputValue: this.props.item.skill
+          inputValue: this.props.item.skill,
+          z: this.props.z
         });
       }
     
@@ -47,26 +56,33 @@ class SkillCard extends Component {
       }
     
       handleDown=(e)=> {
-        // this.down=true;
-        this.setState({
-          down: true,
-          z: 4,
-          posy: e.clientY,
-          posx: e.clientX
-        });
+        
+        if(e.target.tagName==='LI'){
+          e.target.click();
+        }
+        if(!this.state.isInput){
+          this.setState({
+            down: true,
+            z: 40,
+            posy: e.clientY,
+            posx: e.clientX
+          });
+        }
       }
     
-      handleUp=()=> {
-        // clearTimeout(this.timer);
+      handleUp=(e)=> {
+        
+        e.stopPropagation()
+
         this.setState({
             down: false,
-            z:1
+            z:this.props.z
           });
       }
     
       handleMove=(e)=> {
         let self = this;
-        if (this.state.down) {
+        if (this.state.down&&!this.state.isInput) {
           this.timer=setTimeout(() => {
             self.hold=true;
           }, 150);
@@ -118,7 +134,7 @@ class SkillCard extends Component {
         }
       }
       updateYaxis=()=> {
-        if (!this.state.down) {
+        if (!this.state.down&&!this.state.isInput) {
           let f = -0.2 * (this.state.y - (this.state.item.id%5) * 70);
           let x = -.2*this.state.x;
           let ax = x/1;
@@ -175,16 +191,49 @@ class SkillCard extends Component {
       }
     }
 
+    selectOptionHandler=(val,id)=>{
+      this.onSubmitSkillHandler(val, id);
+    }
+
     render(){
+      const self = this;
       const isInput = this.state.isInput||!this.state.inputValue?(
-        <input
-        onKeyDown={(e)=>this.enterHandler(e)}
-        onChange={(e)=>this.onChangeHandler(e)}
-        value={this.state.inputValue}
-        onBlur={(e)=>this.onSubmitSkillHandler(e.target.value, this.state.item.id)}
-        autoFocus className="skillInput"
-        placeholder={this.state.item.id+".Add Skill"}
-        />
+        <>
+          <input
+          onKeyDown={(e)=>this.enterHandler(e)}
+          onChange={(e)=>this.onChangeHandler(e)}
+          value={this.state.inputValue}
+          onBlur={(e)=>this.onSubmitSkillHandler(e.target.value, this.state.item.id)}
+          autoFocus
+          className="skillInput"
+          placeholder={this.state.item.id+".Add Skill"}
+          />
+          {/* <Dropdown
+            onKeyDown={(e)=>this.enterHandler(e)}
+            onChange={(e)=>this.onChangeHandler(e)}
+            value={this.state.inputValue}
+            onBlur={(e)=>this.onSubmitSkillHandler(e.target.value, this.state.item.id)}
+            autoFocus
+            className="skillInput"
+            search
+            selection
+            options={this.state.options}
+            placeholder={this.state.item.id+".Add Skill"}
+          /> */}
+          {/* <Dropdown
+          show={this.state.isInput}
+          options={this.state.options}
+          onclick={this.onSubmitSkillHandler}
+          id={this.state.item.id}
+          className="dropdown"
+          /> */}
+          <ul className="dropdown" style={{opacity: this.state.isInput?"1":"0", visibility: this.state.isInput?"visible":"hidden"}}>
+            {this.state.options.map((el,i)=><li onClick={()=>self.selectOptionHandler(el.text, this.state.item.id)} key={i}>{el.text}</li>)}
+          </ul>
+          {/* {this.state.isInput?(<ul className="dropdown" onClick={(e)=>this.selectOptionHandler(e)}>
+            {this.state.options.map((el,i)=><li key={i}>{el.text}</li>)}
+          </ul>):null} */}
+        </>
          ):(
           <div className="skill">
             <span>{this.props.item.skill}</span>
