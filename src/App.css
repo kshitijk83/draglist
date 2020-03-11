@@ -20,6 +20,7 @@
 
 .header{
   color: rgb(110, 110, 110);
+  margin-bottom: 2rem;
 }
 
 .skillCon{
@@ -28,6 +29,18 @@
   /* flex-wrap: wrap; */
   position: relative;;
   height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.left{
+  width: 48%;
+  position: relative;
+}
+
+.right{
+  width: 48%;
+  position: relative;
 }
 
 .cross{
@@ -52,7 +65,6 @@
   width: 100%;
   box-shadow: 2px 3px 4px 0px rgba(189,183,189,1);
   display: flex;
-  width: 48%;
   /* margin: 1rem; */
   position: absolute;
   left: 0;
@@ -64,5 +76,9 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.cross{
+  cursor: pointer;
 }
