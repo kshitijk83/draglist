@@ -1,61 +1,101 @@
 import React, {Component} from 'react';
 import SkillCard from './SkillCard';
+import Axios from 'axios';
+
+let intialList={
+    list: [
+        {
+            id: 0,
+            skill: ""
+        },
+        {
+            id: 1,
+            skill: ""
+        },
+        {
+            id: 2,
+            skill: ""
+        },
+        {
+            id: 3,
+            skill: ""
+        },
+        {
+            id: 4,
+            skill: ""
+        }
+    ],
+    list2: [
+        {
+            id: 5,
+            skill: ""
+        },
+        {
+            id: 6,
+            skill: ""
+        },
+        {
+            id: 7,
+            skill: ""
+        },
+        {
+            id: 8,
+            skill: ""
+        },
+        {
+            id: 9,
+            skill: ""
+        }
+    ]
+}
 
 class SkillContainer extends Component{
     constructor(props){
         super(props);
         this.state={
+            loading: false,
+            err: false,
             list: [
                 {
                     id: 0,
-                    input: false,
-                    skill: "javascript"
+                    skill: ""
                 },
                 {
                     id: 1,
-                    input: false,
-                    skill: "reactjs"
+                    skill: ""
                 },
                 {
                     id: 2,
-                    input: false,
-                    skill: "graphql"
+                    skill: ""
                 },
                 {
                     id: 3,
-                    input: false,
-                    skill: "html/css/flexbox"
+                    skill: ""
                 },
                 {
                     id: 4,
-                    input: false,
                     skill: ""
                 }
             ],
             list2: [
                 {
                     id: 5,
-                    input: false,
                     skill: ""
                 },
                 {
                     id: 6,
-                    input: false,
                     skill: ""
                 },
                 {
                     id: 7,
-                    input: false,
                     skill: ""
                 },
                 {
                     id: 8,
-                    input: false,
                     skill: ""
                 },
                 {
                     id: 9,
-                    input: true,
                     skill: ""
                 }
             ]
@@ -96,14 +136,19 @@ class SkillContainer extends Component{
         const list = this.state.list;
         let index=list.findIndex((el)=>el.id===id);
         list[index].skill = value;
-        this.setState({list:list});
+        this.setState({list:list},()=>{
+            this.saveFirebase()
+        });
     }
 
+    
     changeSkillHandler2=(value, id)=>{
         const list = this.state.list2;
         let index=list.findIndex((el)=>el.id===id);
         list[index].skill = value;
-        this.setState({list2:list});
+        this.setState({list2:list},()=>{
+            this.saveFirebase();
+        });
     }
 
     crossHandler=(id)=>{
@@ -111,7 +156,9 @@ class SkillContainer extends Component{
         let index=list.findIndex(el=>el.id===id);
         list[index].skill='';
         this.setState({
-            list: list
+            list: list,
+        },()=>{
+            this.saveFirebase()
         })
     }
     crossHandler2=(id)=>{
@@ -119,7 +166,45 @@ class SkillContainer extends Component{
         let index=list.findIndex(el=>el.id===id);
         list[index].skill='';
         this.setState({
-            list2: list
+            list2: list,
+        },()=>{
+            this.saveFirebase();
+        })
+    }
+
+
+    saveFirebase=()=>{
+        const fullList = this.state.list.concat(this.state.list2);
+        let self = this;
+        this.setState({
+            loading: true,
+            err:false
+        },()=>{
+            Axios.delete("https://devorizon.firebaseio.com/skills/-M2CMLhL_MF-AL0TE2lm.json")
+            .then((res)=>{
+                return Axios.put("https://devorizon.firebaseio.com/skills/-M2CMLhL_MF-AL0TE2lm.json", fullList)
+            })
+            .then(res=>{
+                self.setState({loading: false, err: false})
+            })
+            .catch(err=>{
+                self.setState({loading: false, err: true});
+            });
+        })
+    }
+
+    componentDidMount(){
+        Axios.get("https://devorizon.firebaseio.com/skills/-M2CMLhL_MF-AL0TE2lm.json")
+        .then(res=>{
+            if(!res.data){
+                this.setState({
+                    ...intialList
+                })
+            } else{
+                const list = res.data.slice(0, 5);
+                const list2 = res.data.slice(5, 10);
+                this.setState({list, list2});
+            }
         })
     }
 
@@ -135,6 +220,7 @@ class SkillContainer extends Component{
                 handlePos={this.changePos}
                 submitSkill={this.changeSkillHandler}
                 crossHandler={this.crossHandler}
+                save={this.saveFirebase}
                 />
             )
         });
@@ -148,11 +234,15 @@ class SkillContainer extends Component{
                 handlePos={this.changePos2}
                 submitSkill={this.changeSkillHandler2}
                 crossHandler={this.crossHandler2}
+                save={this.saveFirebase}
                 />
             )
         });
     
         return(
+            <>
+            <span style={{position: "absolute", top: 0, left: "50%"}}>{this.state.loading?"saving": ""}</span>
+            <span>{this.state.err?"some error": ""}</span>
             <div className="skillCon">
                 <div className="left">
                     {skillCard}
@@ -161,6 +251,7 @@ class SkillContainer extends Component{
                     {skillCard2}
                 </div>
             </div>
+            </>
         );
     }
 

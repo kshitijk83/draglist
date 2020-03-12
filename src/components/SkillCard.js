@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-// import Dropdown from './Dropdown';
-// import { Dropdown } from 'semantic-ui-react';
+// import request from '../instance';
+import Axios from 'axios';
 
 class SkillCard extends Component {
    constructor(props) {
@@ -19,10 +19,9 @@ class SkillCard extends Component {
           posx: 0,
           isInput: false,
           inputValue: '',
+          customSkill: false,
           options:[
-            {text: "Create Option"},
-            {text: "Create"},
-            {text: "Creasdate"}
+            {name: "Type..."},
           ]
         };
         this.hold=false;
@@ -73,11 +72,14 @@ class SkillCard extends Component {
       handleUp=(e)=> {
         
         e.stopPropagation()
-
-        this.setState({
-            down: false,
-            z:this.props.z
+        if(this.state.down&&this.hold){
+          this.setState({
+              down: false,
+              z:this.props.z
+          },()=>{
+            this.props.save()
           });
+        }
       }
     
       handleMove=(e)=> {
@@ -171,28 +173,84 @@ class SkillCard extends Component {
     }
 
     clickHandler = (e)=>{
-      clearTimeout(this.timer);
-      if(!this.hold){
-        this.setState({isInput: true});
+      if(e.target.tagName==="SPAN"){
+        this.crossHandler();
+      } else{
+        clearTimeout(this.timer);
+        if(!this.hold){
+          this.setState({isInput: true});
+        }
+        this.hold=false;
       }
-      this.hold=false;
     }
     
     onChangeHandler=(e)=>{
-      this.setState({inputValue: e.target.value});
+      let value=e.target.value;
+      this.setState({inputValue: value},()=>{
+        Axios.get(`https://api.stackexchange.com/2.2/tags?order=desc&sort=popular&inname=${value}&site=stackoverflow&key=4cNUxilQMBTsBooH1WZqyQ((`)
+        .then(res=>{
+          if(!res.data.items[0]){
+            this.setState({
+              options: [{name: `Create Option ${value}`}],
+              customSkill: true
+            })
+          } else{
+            this.setState({
+              options: res.data.items,
+              customSkill: false
+            })
+          }
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+
+      })
     }
-    onSubmitSkillHandler=(value, id)=>{
-      this.setState({isInput: false});
-      this.props.submitSkill(value, id);
+    onSubmitSkillHandler=(value, id, e)=>{
+      if(e.nativeEvent.type==="keydown"||"click"){
+
+        this.setState({isInput: false, down: false},()=>{
+          if(this.state.inputValue){
+            if(this.state.customSkill){
+              var x = value.replace("Create Option ", '');
+              this.props.submitSkill(x, id);
+            } else{
+              this.props.submitSkill(value, id);
+            }
+          }
+        });
+      } else if(e.nativeEvent.type==="blur"){
+        this.setState({isInput: false, down: false},()=>{
+          if(this.state.inputValue){
+            if(this.state.customSkill){
+              var x = value.replace("Create Option ", '');
+              this.props.submitSkill(x, id);
+            } else{
+              this.props.submitSkill(value, id);
+            }
+          }
+        });
+      }
     }
     enterHandler=(e)=>{
       if(e.key==="Enter"&&e.target.value){
-        this.onSubmitSkillHandler(e.target.value, this.state.item.id);
+        this.onSubmitSkillHandler(e.target.value, this.state.item.id, e);
       }
     }
 
-    selectOptionHandler=(val,id)=>{
-      this.onSubmitSkillHandler(val, id);
+    selectOptionHandler=(val,id, e)=>{
+      this.onSubmitSkillHandler(val, id, e);
+    }
+
+    crossHandler=()=>{
+      this.setState({
+        options: [{name: "Type..."}],
+        inputValue: '',
+        down: false
+      },()=>{
+        this.props.crossHandler(this.state.item.id);
+      });
     }
 
     render(){
@@ -203,41 +261,19 @@ class SkillCard extends Component {
           onKeyDown={(e)=>this.enterHandler(e)}
           onChange={(e)=>this.onChangeHandler(e)}
           value={this.state.inputValue}
-          onBlur={(e)=>this.onSubmitSkillHandler(e.target.value, this.state.item.id)}
+          onBlur={(e)=>this.onSubmitSkillHandler(e.target.value, this.state.item.id, e)}
           autoFocus
           className="skillInput"
           placeholder={this.state.item.id+".Add Skill"}
           />
-          {/* <Dropdown
-            onKeyDown={(e)=>this.enterHandler(e)}
-            onChange={(e)=>this.onChangeHandler(e)}
-            value={this.state.inputValue}
-            onBlur={(e)=>this.onSubmitSkillHandler(e.target.value, this.state.item.id)}
-            autoFocus
-            className="skillInput"
-            search
-            selection
-            options={this.state.options}
-            placeholder={this.state.item.id+".Add Skill"}
-          /> */}
-          {/* <Dropdown
-          show={this.state.isInput}
-          options={this.state.options}
-          onclick={this.onSubmitSkillHandler}
-          id={this.state.item.id}
-          className="dropdown"
-          /> */}
           <ul className="dropdown" style={{opacity: this.state.isInput?"1":"0", visibility: this.state.isInput?"visible":"hidden"}}>
-            {this.state.options.map((el,i)=><li onClick={()=>self.selectOptionHandler(el.text, this.state.item.id)} key={i}>{el.text}</li>)}
+            {this.state.options.map((el,i)=><li onClick={(e)=>self.selectOptionHandler(el.name, this.state.item.id,e)} key={i}>{el.name}</li>)}
           </ul>
-          {/* {this.state.isInput?(<ul className="dropdown" onClick={(e)=>this.selectOptionHandler(e)}>
-            {this.state.options.map((el,i)=><li key={i}>{el.text}</li>)}
-          </ul>):null} */}
         </>
          ):(
           <div className="skill">
             <span>{this.props.item.skill}</span>
-            <span className="cross" onClick={()=>this.props.crossHandler(this.state.item.id)}>&#10006;</span>        
+            <span className="cross" onClick={()=>this.crossHandler}>&#10006;</span>        
         </div>
         );
         return(

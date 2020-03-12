@@ -1,14 +1,19 @@
 #root{
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: #F2F2F3;
 }
 *{
   box-sizing: border-box;
 }
 /* cread color #73EACC */
+.tasks{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 .App {
   margin: auto;
   width: 70%;
@@ -16,6 +21,7 @@
   background-color: white;
   box-shadow: 0px 6px 7px 0px rgba(179,166,179,1);
   padding: 2rem;
+  position: relative;
 }
 
 .header{
@@ -49,6 +55,10 @@
   width: 100%;
   border: none;
   padding: .7rem;
+  border: 1px solid rgb(206, 203, 203);
+}
+.skillInput:focus{
+  border: 1px solid rgb(0, 137, 250);
 }
 .skill{
   padding: .7rem;
@@ -56,11 +66,12 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
+  box-shadow: 2px 3px 4px 0px rgba(189,183,189,1);
+
 }
 .list{
   background-color: #73EACC;
   width: 100%;
-  box-shadow: 2px 3px 4px 0px rgba(189,183,189,1);
   /* margin: 1rem; */
   position: absolute;
   left: 0;
@@ -90,6 +101,8 @@
   background-color: white;
   border: 1px solid #F2F2F3;
   z-index: 5;
+  max-height: 17rem;
+  overflow-y: scroll;
 }
 
 .dropdown li{
